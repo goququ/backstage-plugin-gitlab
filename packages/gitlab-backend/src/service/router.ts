@@ -21,12 +21,13 @@ function getBasePath(config: Config) {
 export interface RouterOptions {
     logger: Logger;
     config: Config;
+    secure?: boolean;
 }
 
 export async function createRouter(
     options: RouterOptions
 ): Promise<express.Router> {
-    const { logger, config } = options;
+    const { logger, config, secure } = options;
     const basePath = getBasePath(config) || '';
 
     const gitlabIntegrations: GitLabIntegrationConfig[] =
@@ -55,6 +56,7 @@ export async function createRouter(
                 headers: {
                     ...(token ? { 'PRIVATE-TOKEN': token } : {}),
                 },
+                secure,
                 logProvider: () => logger,
                 pathRewrite: {
                     [`^${basePath}/api/gitlab/${host}`]: apiUrl.pathname,
